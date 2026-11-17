@@ -42,7 +42,18 @@ static PyField layout[]={
   F(App,xyAngle,'d'), F(App,showFlags,'u'), F(App,outputFlags,'u'),
   F(App,nodes,'p'), F(App,elems,'p'), F(App,equil,'p'),
   F(App,sonnetData,'p'), F(App,mesh,'p'), F(App,fName,'p'),
-  F(App,outputMode,'i'),
+  F(App,outputMode,'i'), F(App,template,'p'),
+  F(App,varSetDefs,'p'), F(App,varDefs,'p'), F(App,surfaceZones,'p'),
+
+  F(VarSetDef,minVarSets,'i'), F(VarSetDef,maxVarSets,'i'),
+  F(VarSetDef,name,'p'), F(VarSetDef,descr,'p'), F(VarSetDef,varDefs,'p'),
+  F(VarSetDef,varSets,'p'),
+
+  F(VarDef,type,'i'), F(VarDef,varSetDef,'p'), F(VarDef,varType,'i'),
+  F(VarDef,flags,'i'), F(VarDef,row,'i'), F(VarDef,col,'i'),
+  F(VarDef,name,'p'), F(VarDef,descr,'p'), F(VarDef,help,'p'),
+
+  F(VarSet,def,'p'),
 
   F(XApp,type,'i'), F(XApp,x,'p'), F(XApp,views,'p'),
   F(XApp,configFileName,'p'), F(XApp,winToEmbedInto,'u'),
