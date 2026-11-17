@@ -76,6 +76,9 @@ typedef int (*PyBoxProc)(View w,int kind,char* text);
 #define PYVM_SUBEND  3
 typedef void (*PyVarsMenuProc)(int menu,int kind,void* obj,char* label);
 
+/* Items of the zone menus of the dialogs: (label, zone) */
+typedef void (*PyItemProc)(char* label,int value);
+
 /* py_view.c */
 View CreatePyView(XApp xap,int id);
 void SetPyViewRealized(View w,int bRealized);
@@ -156,5 +159,60 @@ int PyVarFromVarSetDef(Var v);
 int PyVarIsLayerIndex(Var v);
 int PyMeshUnsaved(App a);
 int PyAutosave(View w);
+void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet);
+
+/* py_dlgs.c */
+char* PyRotMoveRotate(View w,int bN,int bT);
+char* PyRotMoveMove(View w,double x,double y,double scale,int bN,int bT);
+void PyStretchDlgSet(View w,double xScale,double yScale);
+char* PyCreateNode(View w,double x,double y);
+char* PyCreateSource(View w,double x,double y);
+char* PyCreateChord(View w,int bCartes,double x1,double y1,double z1,
+    double x2,double y2,double z2);
+char* PyCreateSurfaceByLevel(View w,int area,double level);
+char* PyCreateSurfaceByXY(View w,double x,double y);
+int PyDelSurfacesOfCreator(View w,char* oldCreatorId);
+int PyExaminedSurfaceEx(View w,int* pZone,double* pLevel,char** pCreatorId);
+int PyExaminedGridPointEx(View w,char** pCreatorId);
+void PyMarkBoundingElem(View w,int area);
+int PySurfaceZoneItems(View w,PyItemProc proc);
+int PyGridPointSegItems(View w,PyItemProc proc);
+char* PyCreateGridPoint(View w,int area,double value);
+void PyDelGridPointsOfZone(View w,int zone);
+int PyExportElemsCheck(View w,Group g);
+char* PyAppFileName(App a,int which);
+void PyInfoCounts(App a,unsigned* counts);
+void PyMeshOptions(App a,int* pMode,double* pThreshold,int* pDoubleBorder);
+char* PyMeshHeader(Mesh m);
+
+/* py_vars.c */
+int PyGroupList(Group g,void** items,int n);
+int PyVarValueKind(void* p);
+char* PyVarValueDescr(View w,void* value,VarDef vd);
+int PyAcceptVarsField(View w,void* obj,VarDef vd,char* text);
+int PyVarsCompare(View w,void* obj,VarDef vd,int mode,char* s);
+void PyVarsDisplay(View w,void* obj,VarDef vd);
+int PyInvalidVarsItems(View w,PyItemProc proc);
+VarSet PyInvalidVarsWhere(View w,int pos,int* pReset);
+int PyAppHasGeometry(App a);
+void PyConfigFileName(View w,char* s);
+int PySaveConfig(View w,char* s);
+int PyOtherApps(View w);
+void PyUpdateOtherApps(View w);
+
+/* py_topo.c */
+void PyTopoDetect(View w,int bSegments);
+int PyTopoExamined(View w,void* object,double* pLevel,int* pZone,
+    char** pShort,char** pLong,long* pFlags);
+char* PyTopoXptLevel(View w,void* cur,double level);
+char* PyTopoXSeg(View w,void* cur,int zone,char* shortName,char* longName,
+    int bUsed,int bTargetCW);
+char* PyTopoXSegRevert(View w,void* cur);
+char* PyTopoSZSet(View w,void* cur,int bNew,int zone,int gps1,int gps2,
+    int orient,int bClosed,char* shortName,char* longName);
+char* PyTopoSZDelete(View w,void* cur);
+int PyTopoZoneItems(View w,PyItemProc proc);
+void PyTopoZoneInfo(SurfaceZone sz,int* pZone,char** pShort,char** pLong,
+    int* pGps1,int* pGps2,int* pOrient,long* pFlags);
 
 #endif

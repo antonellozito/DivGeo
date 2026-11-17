@@ -21,6 +21,53 @@ static void ErrorBoxPy(View w,char* text) {
   if (boxProc!=NULL) boxProc(w,PYBOX_ERROR,text);
 }
 
+/* File menu (x_menu.c) ***********************************************/
+
+/* CbFileOutput with the two resources of the main window */
+void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet) {
+  char oFName[DG_FNAME_LEN],sFName[DG_FNAME_LEN],tFName[DG_FNAME_LEN],
+    s[DG_FNAME_LEN*6];
+  int r;
+
+  if (w->app==NULL) return;
+  SetActiveView(w);
+
+  r=WriteOutputFile(w->app,NULL);
+  if (!r) r=WriteStructureFile(w->app,NULL);
+  if (!r) r=WriteTargetsFile(w->app,NULL);
+
+  if (r) {ErrorBoxPy(w,GetStr(w,r));return;}
+
+  if (w->app->fName==NULL) {
+    ErrorBoxPy(w,GetStr(w,ERR_NOFNAME));
+    return;
+  }
+
+  strcpy(oFName,w->app->fName);
+  strcpy(GetFileExt(oFName),GetStr(w,FSTR_OUTPUTEXT));
+  strcpy(sFName,w->app->fName);
+  strcpy(GetFileExt(sFName),GetStr(w,FSTR_STRUCTUREEXT));
+  strcpy(tFName,w->app->fName);
+  strcpy(GetFileExt(tFName),GetStr(w,FSTR_TARGETSEXT));
+
+  sprintf(s,"%s\n%s: %s\n%s: %s\n%s: %s",
+    w->app->outputMode==OUTPUTMODE_CARRE? msgCarre : msgSonnet,
+    GetStr(w,STR_OUTPUTFNAME),oFName,
+    GetStr(w,STR_STRUCTUREFNAME),sFName,
+    GetStr(w,STR_TARGETSFNAME),tFName);
+
+  if (boxProc==NULL || boxProc(w,PYBOX_QUESTION,s)) return;
+
+  r=WriteOutputFile(w->app,oFName);
+  if (r) {ErrorBoxPy(w,GetStr(w,r));return;}
+  r=WriteStructureFile(w->app,sFName);
+  if (r) {ErrorBoxPy(w,GetStr(w,r));return;}
+  r=WriteTargetsFile(w->app,tFName);
+  if (r) {ErrorBoxPy(w,GetStr(w,r));return;}
+
+  SetViewMsg(w,GetStr(w,MSG_OUTPUT));
+}
+
 /* Edit menu (x_menu.c) ***********************************************/
 
 void PyCbUndo(View w) {
