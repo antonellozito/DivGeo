@@ -57,6 +57,25 @@ struct _XAppExt {
 typedef void (*PyEventProc)(View w);
 typedef void (*PyConfigureProc)(XApp xap);
 
+/* Message boxes shown by Python: kind PYBOX_*, returns as QuestionBox (0
+   for OK) */
+#define PYBOX_ERROR    0
+#define PYBOX_MESSAGE  1
+#define PYBOX_QUESTION 2
+typedef int (*PyBoxProc)(View w,int kind,char* text);
+
+/* Entries of the Variables menu: menu PYVM_ADD, PYVM_EDIT or PYVM_DELETE;
+   kind PYVM_ITEM, or a submenu: PYVM_SUBMENU, its PYVM_SUBITEMs, then
+   PYVM_SUBEND */
+#define PYVM_ADD     0
+#define PYVM_EDIT    1
+#define PYVM_DELETE  2
+#define PYVM_ITEM    0
+#define PYVM_SUBMENU 1
+#define PYVM_SUBITEM 2
+#define PYVM_SUBEND  3
+typedef void (*PyVarsMenuProc)(int menu,int kind,void* obj,char* label);
+
 /* py_view.c */
 View CreatePyView(XApp xap,int id);
 void SetPyViewRealized(View w,int bRealized);
@@ -88,5 +107,54 @@ void PyFatalError(char* text);
 void PyFatalError2(char* format,char* s1,char* s2);
 void PyNotifyView(View w,int type,void* obj);
 int GetPyGroupCount(Group g);
+
+/* py_cmds.c */
+void SetPyBoxProc(PyBoxProc proc);
+void PyCbUndo(View w);
+void PyCbRedo(View w);
+void PyCbRedoAll(View w);
+void PyCbMarkAll(View w);
+void PyCbMarkAllChords(View w);
+void PyCbUnmarkAll(View w);
+void PyCbCmDelObjects(View w,int objType);
+void PyCbCmRemoveSeparators(View w);
+void PyCbViewRefresh(View w);
+void PyCbZoomIn(View w);
+void PyCbZoomOut(View w);
+void PyCbShowPicture(View w);
+void PyCbShowSelection(View w);
+void PyCbIncAngle(View w);
+void PyCbDecAngle(View w);
+void PyCbResetAngle(View w);
+void PyCbStretchX(View w);
+void PyCbStretchY(View w);
+void PyCbShrinkX(View w);
+void PyCbShrinkY(View w);
+void PyCbResetAspectRatio(View w);
+void PyCmPrevZoom(View w);
+void PyCmRemoveLabels(View w);
+void PyCbChangeFlags(View w,unsigned long flags);
+void PyCbCmAppendTemplate(View w);
+void PyCmConvertElemsToChords(View w);
+void PyCmConvertChordsToElems(View w);
+void PyCbCmRenumber(View w);
+void PyCbCmExtChords(View w);
+int PyCbCmShowInvalidVars(View w);
+void PyCmRebuildCarreInfo(View w);
+VarSet PyCbAddVarSet(View w,VarSetDef vsd);
+void PyCbDelVarSet(View w,VarSet vs);
+int PyVarsMenu(View w,PyVarsMenuProc proc);
+int PyDwUndoButton(View w,int d);
+int PyDwIfExists(View w,int d);
+int PyDwIfNotExists(View w,int d);
+int PyDwShowFlags(View w,int d);
+int PyDwRebuildCarreInfo(View w);
+void PyViewMsg(View w,char* msg);
+void PyViewMsgId(View w,int id);
+char* PyGetStr(View w,int id);
+int PyVarFromVarSetDef(Var v);
+int PyVarIsLayerIndex(Var v);
+int PyMeshUnsaved(App a);
+int PyAutosave(View w);
 
 #endif
