@@ -324,6 +324,66 @@ void PyCbZoomOut(View w) {
   UndoMark(w->app);
 }
 
+/* A step of the mouse wheel or of a held key: the view zoomed or moved and
+   drawn again at once, without an undo record (the view fields as
+   SetViewRect sets them for a view that is not the active view of its
+   App; MIN_RECTW, MIN_RECTH of view.c). The whole movement is recorded
+   once with SetViewFactor and UndoMark when it ends. */
+#define PY_MIN_RECTW 1e-4
+#define PY_MIN_RECTH 1e-4
+
+void PySetViewStep(View w,double cx,double cy,double zx,double zy) {
+  double x1=cx-w->width/2/zx,y1=cy-w->height/2/zy;
+  double x2=cx+w->width/2/zx,y2=cy+w->height/2/zy;
+
+  if (w->width<=0 || w->height<=0) return;
+  if (x2-x1<PY_MIN_RECTW || y2-y1<PY_MIN_RECTH) {
+    x1=(x1+x2)/2;
+    x2=x1+PY_MIN_RECTW/2;
+    x1=2*x1-x2;
+    y1=(y1+y2)/2;
+    y2=y1+PY_MIN_RECTH/2;
+    y1=2*y1-y2;
+  }
+  w->centerX=(x1+x2)/2;
+  w->centerY=(y1+y2)/2;
+  w->zoomX=w->width/(x2-x1);
+  w->zoomY=w->height/(y2-y1);
+  if (!(w->showFlags & SHW_STRETCH)) AdjustViewAspectRatio(w);
+  w->minX=w->centerX-w->width/w->zoomX/2.;
+  w->minY=w->centerY-w->height/w->zoomY/2.;
+  w->maxX=w->centerX+w->width/w->zoomX/2.;
+  w->maxY=w->centerY+w->height/w->zoomY/2;
+  ClearView(w);
+  if (w->app!=NULL) RepaintView(w);
+}
+
+/* The elements of the App of a view as the screen positions of the lines
+   the view draws for them (DrawElem: node 1 to node 2, the rotation of the
+   view included), also outside the view: x1, y1, x2, y2 of each into out
+   (at most max); returns their number. For the fill of the closed parts of
+   the elements in the light and dark themes. */
+long PyElemSegments(View w,double* out,long max) {
+  Elem e;
+  Index ix;
+  long n=0;
+  double x1,y1,x2,y2;
+
+  if (w->app==NULL) return 0;
+  for (e=AppElem1st(w->app,&ix);e!=NULL;e=Next(&ix)) {
+    if (n<max) {
+      x1=e->n[1]->x; y1=e->n[1]->y;
+      x2=e->n[2]->x; y2=e->n[2]->y;
+      ScreenRotate(w,1,&x1,&y1);
+      ScreenRotate(w,1,&x2,&y2);
+      out[4*n]=FScreenX(w,x1); out[4*n+1]=FScreenY(w,y1);
+      out[4*n+2]=FScreenX(w,x2); out[4*n+3]=FScreenY(w,y2);
+    }
+    n++;
+  }
+  return n;
+}
+
 void PyCbShowPicture(View w) {
   SetActiveView(w);
   if (w->app==NULL) return;
