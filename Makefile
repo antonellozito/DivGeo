@@ -137,6 +137,8 @@ ${PYLIB}: $(PYDEST) $(MAKES) | ${GUISTAMP}
 ${PYDIR}/%.o : %.c | ${PYDIR}
 	 $(CC) $(CFLAGS) -fPIC $(PYINC) -c $< -o $@
 
+${PYDIR}/py_raster.o: CFLAGS += -O2 -ffp-contract=off
+
 ${PYDIR}:
 	mkdir -p $@
 

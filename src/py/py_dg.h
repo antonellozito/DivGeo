@@ -215,4 +215,21 @@ int PyTopoZoneItems(View w,PyItemProc proc);
 void PyTopoZoneInfo(SurfaceZone sz,int* pZone,char** pShort,char** pLong,
     int* pGps1,int* pGps2,int* pOrient,long* pFlags);
 
+/* py_cmds.c: a step of the wheel or of a held key, the elements for the
+   fill of the closed parts */
+void PySetViewStep(View w,double cx,double cy,double zx,double zy);
+long PyElemSegments(View w,double* out,long max);
+
+/* py_raster.c */
+long PyRasterDraw(unsigned int* img,int w,int h,const struct _PyRec* recs,
+    long n,long k,int view,int hiddenFlag,int clippedFlag,int hlFlag,
+    int squares,int stopAtClear,unsigned int bg,const int* gcValid,
+    const int* gcFunc,const unsigned int* gcFg,const int* gcWidth,
+    int nModes,int* pFunc,unsigned int* pFg,int* pWidth,int scaled,int f,
+    int dpr,int ss);
+long PyRasterElemLines(const struct _PyRec* recs,long n,long start,
+    int view,int hiddenFlag,int hlFlag,int elemMode,double* out,long max);
+void PyRasterAverage(const unsigned int* src,int w,int h,int ss,
+    unsigned int* dst);
+
 #endif
