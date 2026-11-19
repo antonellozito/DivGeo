@@ -159,7 +159,7 @@ int PyVarFromVarSetDef(Var v);
 int PyVarIsLayerIndex(Var v);
 int PyMeshUnsaved(App a);
 int PyAutosave(View w);
-void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet);
+void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet,char* msgGoat);
 
 /* py_dlgs.c */
 char* PyRotMoveRotate(View w,int bN,int bT);
