@@ -24,9 +24,10 @@ static void ErrorBoxPy(View w,char* text) {
 /* File menu (x_menu.c) ***********************************************/
 
 /* CbFileOutput with the two resources of the main window */
-void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet) {
+void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet,char* msgGoat) {
   char oFName[DG_FNAME_LEN],sFName[DG_FNAME_LEN],tFName[DG_FNAME_LEN],
     s[DG_FNAME_LEN*6];
+  char *msgstring;
   int r;
 
   if (w->app==NULL) return;
@@ -50,8 +51,27 @@ void PyCbFileOutput(View w,char* msgCarre,char* msgSonnet) {
   strcpy(tFName,w->app->fName);
   strcpy(GetFileExt(tFName),GetStr(w,FSTR_TARGETSEXT));
 
+  switch(w->app->outputMode){
+    case OUTPUTMODE_CARRE:
+      printf("Carre mode selected\n");
+      msgstring = msgCarre;
+      break;
+    case OUTPUTMODE_SONNET:
+      printf("Sonnet mode selected\n");
+      msgstring = msgSonnet;
+      break;
+    case OUTPUTMODE_GOAT:
+      printf("GOAT mode selected\n");
+      msgstring = msgGoat;
+      break;
+    default:
+      printf("No output mode selected\n");
+      msgstring = "";
+      break;
+  }
+
   sprintf(s,"%s\n%s: %s\n%s: %s\n%s: %s",
-    w->app->outputMode==OUTPUTMODE_CARRE? msgCarre : msgSonnet,
+    msgstring,
     GetStr(w,STR_OUTPUTFNAME),oFName,
     GetStr(w,STR_STRUCTUREFNAME),sFName,
     GetStr(w,STR_TARGETSFNAME),tFName);
